@@ -5,8 +5,7 @@
         <div class="container has-text-centered">
           <div class="column is-4 is-offset-4">
             <img class="logo" src="./../assets/logo.png" width="150px">
-              <h3 class="title has-text-grey">Signup</h3>
-              <p class="subtitle has-text-grey">Create a new user</p>
+              <h3 class="title has-text-grey">Create A New User</h3>
               <div class="box">
                 <figure class="avatar">
                     <v-gravatar v-if="nameHash != 'd41d8cd98f00b204e9800998ecf8427e' && nameHash != ''" :hash="nameHash"/>
@@ -51,15 +50,12 @@ export default {
   methods: {
     auth (name, password) {
       if (name in this.$store.state.users) {
-        if (this.$store.state.users[name] === password) {
-          this.$store.commit('login')
-        }
-        else {
-          this.$notify({ group: 'auth', type: 'error', text: 'Wrong password, please try again.' })
-        }
+        this.$notify({ group: 'auth', type: 'error', text: 'User Already exist, choose a different Name.' })
       }
       else {
-        this.$notify({ group: 'auth', type: 'error', text: 'User does not exist.' })
+        this.$store.commit('login', name)
+        var payload = {name, password}
+        this.$store.commit('addUser', payload)
       }
     },
     update () {
@@ -81,7 +77,7 @@ html,body {
   font-weight: 300;
 }
 .logo {
-  margin-top: -80px;
+  margin-top: -100px;
   margin-bottom: 30px;
 }
 .hero.is-success {
@@ -90,6 +86,9 @@ html,body {
 .hero .nav, .hero.is-success .nav {
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+.hero-body {
+  padding-top: 0px;
 }
 .box {
   margin-top: 5rem;

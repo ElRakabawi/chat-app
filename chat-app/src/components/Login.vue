@@ -6,7 +6,6 @@
           <div class="column is-4 is-offset-4">
             <img class="logo" src="./../assets/logo.png" width="150px">
               <h3 class="title has-text-grey">Login</h3>
-              <p class="subtitle has-text-grey">Please login to proceed.</p>
               <div class="box">
                 <figure class="avatar">
                     <v-gravatar v-if="nameHash != 'd41d8cd98f00b204e9800998ecf8427e' && nameHash != ''" :hash="nameHash"/>
@@ -24,7 +23,7 @@
                       <input v-model="passwordField" class="input is-large" type="password" placeholder="Your Password">
                     </div>
                   </div>
-                  <button type="button" class="button is-block is-info is-large is-fullwidth" @click="auth(nameField, passwordField)">Login</button>
+                  <button type="button" class="button is-block is-primary is-large is-fullwidth" @click="auth(nameField, passwordField)">Login</button>
                 </form>
               </div>
               <p class="has-text-grey">
@@ -52,7 +51,8 @@ export default {
     auth (name, password) {
       if (name in this.$store.state.users) {
         if (this.$store.state.users[name] === password) {
-          this.$store.commit('login')
+          this.$store.commit('login', name)
+          this.$notify({ group: 'auth', type: 'success', text: 'Logged In successfully. Welcome back ' + name + '!' })
         }
         else {
           this.$notify({ group: 'auth', type: 'error', text: 'Wrong password, please try again.' })
@@ -81,7 +81,7 @@ html,body {
   font-weight: 300;
 }
 .logo {
-  margin-top: -80px;
+  margin-top: -100px;
   margin-bottom: 30px;
 }
 .hero.is-success {
@@ -90,6 +90,10 @@ html,body {
 .hero .nav, .hero.is-success .nav {
   -webkit-box-shadow: none;
   box-shadow: none;
+}
+.hero-body {
+  padding-top: 0px;
+  background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 .box {
   margin-top: 5rem;

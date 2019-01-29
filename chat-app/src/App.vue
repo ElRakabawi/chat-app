@@ -13,6 +13,7 @@ import Login from './components/Login.vue'
 import CreateUser from './components/CreateUser.vue'
 import Chat from './components/Chat.vue'
 
+
 export default {
   name: 'app',
   components: {

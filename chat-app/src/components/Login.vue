@@ -75,11 +75,6 @@ export default {
 </script>
 
 <style scoped>
-html,body {
-  font-family: 'Open Sans', serif;
-  font-size: 14px;
-  font-weight: 300;
-}
 .logo {
   margin-top: -100px;
   margin-bottom: 30px;
@@ -93,7 +88,7 @@ html,body {
 }
 .hero-body {
   padding-top: 0px;
-  background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #F2F6FA;
 }
 .box {
   margin-top: 5rem;

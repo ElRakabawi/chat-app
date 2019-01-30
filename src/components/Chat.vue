@@ -1,14 +1,14 @@
 <template>
   <div class="login">
     <!-- navbar -->
-    <nav class="navbar has-shadow" role="navigation" aria-label="main navigation">
+    <nav class="navbar has-shadow">
       <div class="navbar-brand">
         <a class="navbar-item">
-          <img src="./../assets/borderless_logo.png" width="130px" >
+          <img src="./../assets/borderless_logo.png" width="130px"/>
         </a>
       </div>
 
-      <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-menu">
         <div class="navbar-end">
           <div class="navbar-item with-sep">
             <v-gravatar class="gravatar-icon" :hash="nameHash(this.$store.state.currentUser)"/>
@@ -27,8 +27,8 @@
 
     <!-- Chat Sidebar for selecting user to chat with -->
     <section class="main-content columns is-fullheight full-with-nav">
-      <aside class="people column is-3 is-narrow-mobile is-fullheight section is-hidden-mobile">
-        <p class="menu-label is-hidden-touch online-text">Online people ({{ onlinePeople(members) }})</p>
+      <aside class="people column is-3 is-fullheight section">
+        <p class="menu-label online-text">Online people ({{ onlinePeople(members) }})</p>
         <ul class="menu-list">
           <div v-for="(member, i) in members" :key="i" class="card">
             <div @click="selectUser(member.clientData.name)">
@@ -106,14 +106,14 @@
               <label class="file-label">
                 <input @change="onFileChange" class="file-input" accept="image/*" type="file" name="resume">
                 <span class="file-cta">
-                  <span class="mdi mdi-rotate-45 mdi-36px mdi-paperclip"></span>
+                  <span class="mdi mdi-image"></span>
                   <span class="file-label">
                     Choose an Image…
                   </span>
                 </span>
               </label>
             </div>
-            <input v-model="msg" class="input typewrite" type="text" placeholder="Enter your message..">٣
+            <input v-model="msg" class="input typewrite" type="text" placeholder="Enter your message..">
             <a @click="sendMessage(msg)" value="Send" type="submit" class="button send-button">SEND</a>
           </form>
         </section>
@@ -376,7 +376,7 @@ p.subtitle {
 }
 .mine {
   float: right;
-  margin-right: 20px;
+  margin-right: 15px;
 }
 .message-content {
   width: fit-content !important;
@@ -394,57 +394,57 @@ p.subtitle {
   padding-top: 25px;
 }
 .typewrite {
-  width: 90%;
+  width: 89%;
   box-shadow: none;
   -webkit-box-shadow: none;
   border-radius: 0px;
-  height: 80px;
+  height: 60px;
   background-color: #fafafa;
   border-left: 0px;
   border-bottom: 0px;
   border-right: 0px;
-  border-top: 1px solid rgba(0,0,0,.1);
+  border-top: 1px solid rgba(0,0,0,.2);
   padding-left: 90px !important;
+  padding-right: 0px !important;
   font-size: 16px;
 }
 .typewrite:focus {
   box-shadow: none;
   -webkit-box-shadow: none;
   border-color: rgba(0,0,0,.3);
+  float: left;
 }
 .send-button {
-  height: 80px !important;
+  height: 60px !important;
+  font-weight: 700;
+  font-size: 15px;
   width: 10%;
   border-radius: 0px;
   background-color: #fafafa;
   border-left: 0px;
   border-bottom: 0px;
   border-right: 0px;
-  border-top: 1px solid rgba(0,0,0,.1);
+  border-top: 1px solid rgba(0,0,0,.2);
+  padding-left: 0px;
 }
-.mdi {
-  color: rgba(0,0,0,.4)
+.file.is-boxed .file-cta {
+  color: rgba(0,0,0,.4);
+  margin-top: -14px;
+  margin-left: -42px;
+  font-size: 25px;
+  border-radius: 0px !important;
+  border-color: transparent !important;
 }
 .is-boxed {
   width: 70px;
-  height: 80px;
+  height: 60px;
   background-color: #fafafa !important;
   border-color: transparent !important;
   border-radius: 0px !important;
-  border-top: 1px solid rgba(0,0,0,.1) !important;
+  border-top: 1px solid rgba(0,0,0,.2) !important;
   font-size: 12px;
   padding: 0px;
-  margin-bottom: -80px;
+  margin-bottom: -60px;
   z-index: 999;
-}
-#preview {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#preview img {
-  max-width: 100%;
-  max-height: 500px;
 }
 </style>

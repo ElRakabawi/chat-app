@@ -31,15 +31,29 @@
         <p class="menu-label is-hidden-touch online-text">Online people ({{ onlinePeople(members) }})</p>
         <ul class="menu-list">
           <div v-for="(member, i) in members" :key="i" class="card">
-            <div class="card-content card-hoverable">
-              <div class="media">
-                <div class="media-left">
-                  <figure class="image is-48x48">
-                    <v-gravatar class="gravatar-icon" :hash="nameHash(displayMember(member))"/>
-                  </figure>
+            <div @click="selectUser(member.clientData.name)">
+              <div v-if="selectedUser == member.clientData.name" class="card-content card-selected">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48">
+                      <v-gravatar class="gravatar-icon" :hash="nameHash(displayMember(member))"/>
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <p class="user-name is-4">{{ displayMember(member) }}</p>
+                  </div>
                 </div>
-                <div class="media-content">
-                  <p class="user-name is-4">{{ displayMember(member) }}</p>
+              </div>
+              <div v-else class="card-content card-hoverable">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-48x48">
+                      <v-gravatar class="gravatar-icon" :hash="nameHash(displayMember(member))"/>
+                    </figure>
+                  </div>
+                  <div class="media-content">
+                    <p class="user-name is-4">{{ displayMember(member) }}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -51,17 +65,57 @@
         <section class="hero is-success is-fullheight full-with-nav is-grey">
           <div class="section">
             <div class="new-message" v-for="(message, i) in messages" :key="i">
-              <v-gravatar class="gravatar" :hash="nameHash(message[1])" width="35"/>
-              <div  class="card message-card">
-                <div class="card-content message-content"><div class="content">{{ message[0] }}</div></div>
+              <div v-if="message[1] == $store.state.currentUser">
+                <v-gravatar class="gravatar mine" :hash="nameHash(message[1])" width="35"/>
+                <div  class="card message-card mine">
+                    <div v-if="checkEncode(message[0])">
+                      <div class="card-content message-content">
+                        <div class="content">
+                          <img v-bind:src="'data:image/png;base64,'+message[0]" />
+                        </div>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <div class="card-content message-content"><div class="content">{{ message[0] }}</div></div>
+                    </div>
+                </div>
+              </div>
+              <div v-else>
+                <div v-if="selectedUser != '' && message[1] == selectedUser">
+                  <v-gravatar class="gravatar" :hash="nameHash(message[1])" width="35"/>
+                  <div class="card message-card">
+                    <div v-if="checkEncode(message[0])">
+                      <div class="card-content message-content">
+                        <div class="content">
+                          <img v-bind:src="'data:image/png;base64,'+message[0]" />
+                        </div>
+                      </div>
+                    </div>
+                    <div v-else>
+                      <div class="card-content message-content"><div class="content">{{ message[0] }}</div></div>
+                    </div>
+                    
+                  </div>
+                </div>
               </div>
               <br />
             </div>
           </div>
-          <div class="control" onsubmit="return false;">
-            <input v-model="msg" class="input typewrite" type="text" placeholder="Enter your message..">
+          <form class="control" onsubmit="return false;">
+            <div class="file is-boxed">
+              <label class="file-label">
+                <input @change="onFileChange" class="file-input" accept="image/*" type="file" name="resume">
+                <span class="file-cta">
+                  <span class="mdi mdi-rotate-45 mdi-36px mdi-paperclip"></span>
+                  <span class="file-label">
+                    Choose an Image…
+                  </span>
+                </span>
+              </label>
+            </div>
+            <input v-model="msg" class="input typewrite" type="text" placeholder="Enter your message..">٣
             <a @click="sendMessage(msg)" value="Send" type="submit" class="button send-button">SEND</a>
-          </div>
+          </form>
         </section>
       </div>
     </section>
@@ -70,6 +124,8 @@
 
 <script>
 import md5 from 'js-md5'
+import image2base64 from 'image-to-base64'
+import isBase64 from 'is-base64'
 
 export default {
   data () {
@@ -78,13 +134,14 @@ export default {
       members: [],
       msg: '',
       messages: [],
+      imgURL: null,
       drone: new ScaleDrone('ye83bXDLnHbIiwRc', {
       data: { // Will be sent out as clientData via events
         name: this.$store.state.currentUser,
         color: "#000000",
       },
     }),
-    selectedSener: ''
+    selectedUser: ''
     }
   },
   methods: {
@@ -98,7 +155,8 @@ export default {
       this.drone.publish({
         room: 'observable-instadiet-room',
         message: value,
-      });
+      })
+      this.msg = ''
     },
     updateMembers (memberList) {
       for(var i=0; i<memberList.length; i++) {
@@ -135,6 +193,30 @@ export default {
     },
     addMsgToHistory (msg, sender) {
       this.messages.push([msg, sender])
+    },
+    selectUser (user) {
+      this.selectedUser = user
+    },
+    onFileChange(e) {
+      const file = e.target.files[0]
+      this.encodeImg(URL.createObjectURL(file))
+    },
+    encodeImg (file) {
+      image2base64(file)
+      .then(
+          (response) => {
+            this.sendMessage(response)
+            console.log(response)
+          }
+      )
+      .catch(
+          (error) => {
+            console.log(error)
+          }
+      )
+    },
+    checkEncode(buffer) {
+      return isBase64(buffer)
     }
   },
   mounted () {
@@ -272,6 +354,9 @@ p.subtitle {
 .card-hoverable:hover {
   background-color: rgba(0,0,0,0.01)
 }
+.card-selected {
+  background-color: rgba(0,0,0,0.015)
+}
 .card-content {
   padding-top: 15px;
 }
@@ -289,6 +374,10 @@ p.subtitle {
   margin-top: -3px;
   word-break: break-all;
 }
+.mine {
+  float: right;
+  margin-right: 20px;
+}
 .message-content {
   width: fit-content !important;
   padding-top: 8px;
@@ -302,7 +391,7 @@ p.subtitle {
   margin-top: -36px;
 }
 .people {
-  padding-top: 40px;
+  padding-top: 25px;
 }
 .typewrite {
   width: 90%;
@@ -315,7 +404,7 @@ p.subtitle {
   border-bottom: 0px;
   border-right: 0px;
   border-top: 1px solid rgba(0,0,0,.1);
-  padding-left: 20px !important;
+  padding-left: 90px !important;
   font-size: 16px;
 }
 .typewrite:focus {
@@ -332,5 +421,30 @@ p.subtitle {
   border-bottom: 0px;
   border-right: 0px;
   border-top: 1px solid rgba(0,0,0,.1);
+}
+.mdi {
+  color: rgba(0,0,0,.4)
+}
+.is-boxed {
+  width: 70px;
+  height: 80px;
+  background-color: #fafafa !important;
+  border-color: transparent !important;
+  border-radius: 0px !important;
+  border-top: 1px solid rgba(0,0,0,.1) !important;
+  font-size: 12px;
+  padding: 0px;
+  margin-bottom: -80px;
+  z-index: 999;
+}
+#preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 100%;
+  max-height: 500px;
 }
 </style>
